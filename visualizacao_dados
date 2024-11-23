@@ -1,0 +1,74 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Ler o arquivo
+df = pd.read_csv('C:/Users/rildo/Downloads/clientes-v3-preparado.csv')
+
+# Configurar estilo de gráficos
+sns.set_theme(style="whitegrid")
+
+# 1. Gráfico de Histograma - Distribuição das idades
+plt.figure(figsize=(8, 6))
+plt.hist(df['idade'], bins=15, color='skyblue', edgecolor='black')
+plt.title('Distribuição das idades dos Clientes', fontsize=14)
+plt.xlabel('idade', fontsize=12)
+plt.ylabel('Frequência', fontsize=12)
+plt.show()
+
+# 2. Gráfico de Densidade - Distribuição das idades
+plt.figure(figsize=(8, 6))
+sns.kdeplot(df['idade'], fill=True, color='purple')
+plt.title('Densidade de Idades dos Clientes', fontsize=14)
+plt.xlabel('idade', fontsize=12)
+plt.ylabel('Densidade', fontsize=12)
+plt.show()
+
+# # 3. Gráfico de Dispersão - Correlação Qtd Filhos x Salário
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='numero_filhos', y='salario', data=df, color='blue', alpha=0.6)
+plt.title('Correlação entre Filhos e Salario', fontsize=14)
+plt.xlabel('Filhos', fontsize=12)
+plt.ylabel('Salario', fontsize=12)
+plt.show()
+
+# 4. Gráfico de Regressão - Filhos x Salário
+plt.figure(figsize=(8, 6))
+sns.regplot(x='numero_filhos', y='salario', data=df, color='green')
+plt.title('Regressão entre Filhos e Salários', fontsize=14)
+plt.xlabel('Filhos', fontsize=12)
+plt.ylabel('Salário', fontsize=12)
+plt.show()
+
+# 5. Gráfico de Pizza - Proporção de Filhos
+numero_filhos = df['numero_filhos'].value_counts()
+plt.figure(figsize=(8, 8))
+plt.pie(numero_filhos, labels=numero_filhos.index, autopct='%1.1f%%', startangle=90, colors=['lightblue', 'pink'])
+plt.title('Proporção de Filhos', fontsize=14)
+plt.show()
+
+# 6. Gráfico de Barra - Categorias de Salário
+plt.figure(figsize=(10, 6))
+salario = df['numero_filhos'].value_counts()
+sns.barplot(x=salario.values, y=numero_filhos.index, hue=salario.index, palette='viridis', dodge=False)
+plt.title('Frequência de Categorias de Salário', fontsize=14)
+plt.xlabel('Frequência', fontsize=12)
+plt.ylabel('Categoria de Salário', fontsize=12)
+sns.barplot(x=salario.values, y=numero_filhos.index, hue=salario.index, palette='viridis', dodge=False)
+plt.show()
+
+# Filtrar colunas numéricas para correlação
+numerical_df = df.select_dtypes(include=['float64', 'int64'])
+correlacoes = numerical_df.corr()
+
+# 7. mapa de calor com correlações
+sns.heatmap(correlacoes, annot=True, cmap='coolwarm', fmt='.2f')
+plt.title('Mapa de Calor de Correlações')
+plt.show()
+
+
+
+
+
+
+
