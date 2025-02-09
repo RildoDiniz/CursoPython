@@ -1,0 +1,49 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+
+file_path = r"C:\Users\rildo\Downloads\MOD13.csv"
+df = pd.read_csv(file_path)
+print(df.head())
+
+# 1 - Média e mediana dos preços por categoria
+media_preco = df.groupby('Categoria')['Preco_Normal'].mean()
+mediana_preco = df.groupby('Categoria')['Preco_Normal'].median()
+
+# Identificando categorias onde a média está acima ou abaixo da mediana
+comparacao = pd.DataFrame({'Média': media_preco, 'Mediana': mediana_preco})
+comparacao['Diferença'] = comparacao['Média'] - comparacao['Mediana']
+categorias_acima = comparacao[comparacao['Média'] > comparacao['Mediana']]
+categorias_abaixo = comparacao[comparacao['Média'] < comparacao['Mediana']]
+print("Categorias com média acima da mediana:\n", categorias_acima)
+print("Categorias com média abaixo da mediana:\n", categorias_abaixo)
+
+# 2 - Desvio padrão por categoria
+desvio_padrao = df.groupby('Categoria')['Preco_Normal'].std()
+categoria_maior_desvio = desvio_padrao.idxmax()
+print("Categoria com maior desvio padrão:", categoria_maior_desvio)
+
+# 3 - Boxplot da categoria com maior desvio padrão
+plt.figure(figsize=(10, 6))
+sns.boxplot(y=df.loc[df['Categoria'] == categoria_maior_desvio, 'Preco_Normal'])
+plt.title(f'Distribuição de Preco_Normal para {categoria_maior_desvio}')
+plt.ylabel('Preço Normal')
+plt.show()
+
+# 4 - Gráfico de barras da média de descontos por categoria
+media_desconto = df.groupby('Categoria')['Desconto'].mean()
+plt.figure(figsize=(12, 6))
+media_desconto.sort_values().plot(kind='bar', color='skyblue')
+plt.title('Média de Descontos por Categoria')
+plt.ylabel('Média de Desconto')
+plt.xlabel('Categoria')
+plt.xticks(rotation=45)
+plt.show()
+
+# 5 - Mapa interativo agrupando por categoria e marca, trazendo a média de desconto
+df_mapa = df.groupby(['Categoria', 'Marca'])['Desconto'].mean().reset_index()
+fig = px.scatter(df_mapa, x='Categoria', y='Marca', size='Desconto', color='Desconto',
+                 title='Média de Desconto por Categoria e Marca', size_max=20)
+fig.show()
+
